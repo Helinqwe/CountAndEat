@@ -1,0 +1,41 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  count_api:
+    image: count_api
+    depends_on:
+      - "count_bd"
+    container_name: count_api
+    ports:
+      - 1488:80
+    expose:
+      - 80
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__defaultConnection=Username=postgres;Password=1e2rf3s6wsd6f;Host=count_bd;Port=5432;Database=CoundAndEatDb;
+    networks:
+      - dev
+
+  count_bd:
+    image: postgres:16.2
+    container_name: count_bd
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1e2rf3s6wsd6f
+      - POSTGRES_DB:CoundAndEatDb
+    ports:
+      - "5322:5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    networks:
+      - dev
+      
+volumes:
+  db_volume:
